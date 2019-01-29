@@ -33,6 +33,17 @@ func (c *Client) RunFunction(funcName string, params []byte) (string, error) {
     return string(data), nil
 }
 
+func (c *Client) ListDevices() (string, error){
+    req, err := c.newRequest("GET", "/api/devices", nil)
+    if err != nil {
+        return "Error encountered.", err
+    }
+    resp, err := c.do(req)
+    data, _ := ioutil.ReadAll(resp.Body)
+    defer resp.Body.Close()
+    return string(data), nil
+}
+
 func (c *Client) newRequest(method string, path string, body map[string]interface{}) (*http.Request, error) {
     rel := &url.URL{Path: path}
     u := c.BaseURL.ResolveReference(rel)
@@ -60,6 +71,5 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
     if err != nil {
         return nil, err
     }
-    defer resp.Body.Close()
     return resp, nil
 }
